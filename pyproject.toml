@@ -1,0 +1,46 @@
+[project]
+name = "quickstart"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Timothy Wong",email = "timothy.wong@hotmail.co.uk"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+]
+
+[project.scripts]
+app = "quickstart.main:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^7.1.0"
+flake8 = "^7.3.0"
+black = "^25.12.0"
+isort = "^7.0.0"
+pre-commit = "^4.5.1"
+pytest = "^9.0.2"
+pytest-cov = "^7.0.0"
+nbstripout = "^0.8.2"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+python_files = [
+    "test_*.py",
+]
+python_functions = [
+    "test_*",
+]
+python_classes = [
+    "Test*",
+]
+addopts = [
+    "-v",
+    "--cov-report=html",
+]

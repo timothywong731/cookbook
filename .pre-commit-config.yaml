@@ -1,0 +1,30 @@
+repos:
+  - repo: local
+    hooks:
+      # Format Python code
+      - id: black
+        name: Black Code Formatter
+        entry: poetry run black
+        language: system
+        types: [python]
+
+      # Sort Python imports
+      - id: isort
+        name: isort Import Sorter
+        entry: poetry run isort
+        language: system
+        types: [python]
+
+      # Lint Python code
+      - id: flake8
+        name: Flake8 Linter
+        entry: poetry run flake8
+        language: system
+        types: [python]
+
+      # Strip output from Jupyter notebooks
+      - id: nbstripout
+        name: Strip Output from Notebooks
+        entry: poetry run nbstripout
+        language: system
+        types: [jupyter]
