@@ -221,3 +221,4 @@ __marimo__/
 # GitHub Copilot instructions
 # This should be generated and managed locally. Always keep it up-to-date and 
 .github/copilot-instructions.md
+credentials.json

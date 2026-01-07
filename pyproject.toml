@@ -1,17 +1,22 @@
 [project]
-name = "quickstart"
+name = "cookbook"
 version = "0.1.0"
-description = ""
+description = "This package aims to create a cookbook using AI-generated recipes and images."
 authors = [
     {name = "Timothy Wong",email = "timothy.wong@hotmail.co.uk"}
 ]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "google-auth-oauthlib>=1.2.0",
+    "google-api-python-client>=2.116.0",
+    "Pillow>=10.2.0",
+    "openai>=1.12.0",
+    "python-dotenv>=1.0.1",
 ]
 
 [project.scripts]
-app = "quickstart.main:main"
+app = "cookbook.main:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
