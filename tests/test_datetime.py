@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from quickstart.utils.datetime import format_datetime
+from cookbook.utils.datetime import format_datetime
 
 
 def test_format_datetime_standard():
