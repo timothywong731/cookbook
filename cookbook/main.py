@@ -1,5 +1,9 @@
-def main():
-    print("Hello, World!")
+from cookbook.pipeline import CookbookPipeline
+
+
+def main() -> None:
+    pipeline = CookbookPipeline()
+    pipeline.run()
 
 
 if __name__ == "__main__":
