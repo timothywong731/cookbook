@@ -11,4 +11,5 @@ def format_datetime(dt: datetime) -> str:
     Returns:
         str: The formatted datetime string.
     """
+    # Format the datetime using a consistent pattern.
     return dt.strftime("%Y-%m-%d %H:%M:%S")
