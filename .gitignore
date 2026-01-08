@@ -222,3 +222,7 @@ __marimo__/
 # This should be generated and managed locally. Always keep it up-to-date and 
 .github/copilot-instructions.md
 credentials.json
+
+output/
+input/
+.vscode/launch.json
