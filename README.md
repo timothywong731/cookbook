@@ -61,7 +61,7 @@ The app supports separate endpoints for Chat (extraction) and Images (generation
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
 AZURE_OPENAI_API_KEY=your-api-key
 AZURE_OPENAI_API_VERSION=2024-08-01-preview
-AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-4o
+AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-5-mini
 
 # Image Generation (FLUX.2-pro / DALL-E)
 # Use the Target URI for Serverless deployments
