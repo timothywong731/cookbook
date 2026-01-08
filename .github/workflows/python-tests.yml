@@ -31,15 +31,11 @@ jobs:
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-
-      - name: Install project
         run: poetry install --no-interaction
 
       - name: Run tests
         run: |
-          poetry run pytest --cov=quickstart --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
+          poetry run pytest --cov=cookbook --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
