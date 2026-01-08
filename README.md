@@ -42,7 +42,7 @@ More examples of generated illustrations in watercolor style:
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd vibe_cookbook
+   cd cookbook
    ```
 
 2. Install dependencies:
@@ -97,7 +97,7 @@ poetry run pytest
 ## Project Structure
 
 ```text
-vibe_cookbook/
+cookbook/
 ├── cookbook/           # Main package source code
 │   ├── ai.py           # Azure OpenAI & FLUX logic
 │   ├── pipeline.py     # Orchestration logic
