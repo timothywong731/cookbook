@@ -26,18 +26,18 @@ def split_to_aspect_ratio(
 
     # Load image metadata to determine split strategy.
     output_dir.mkdir(parents=True, exist_ok=True)
-    image = Image.open(image_path)
-    width, height = image.size
-    current_ratio = width / height
+    with Image.open(image_path) as image:
+        width, height = image.size
+        current_ratio = width / height
 
-    if abs(current_ratio - target_ratio) < 0.01:
-        output_path = output_dir / image_path.name
-        image.save(output_path)
-        return [output_path]
+        if abs(current_ratio - target_ratio) < 0.01:
+            output_path = output_dir / image_path.name
+            image.save(output_path)
+            return [output_path]
 
-    if current_ratio > target_ratio:
-        return _split_wide(image, image_path, output_dir, target_ratio, margin_ratio)
-    return _split_tall(image, image_path, output_dir, target_ratio, margin_ratio)
+        if current_ratio > target_ratio:
+            return _split_wide(image, image_path, output_dir, target_ratio, margin_ratio)
+        return _split_tall(image, image_path, output_dir, target_ratio, margin_ratio)
 
 
 def _split_tall(
@@ -63,8 +63,6 @@ def _split_tall(
     # Slide a crop window vertically to create splits.
     width, height = image.size
     crop_height = int(width / target_ratio)
-    if crop_height >= height:
-        crop_height = height
     step = int(crop_height * (1 - margin_ratio))
     if step <= 0:
         step = crop_height
@@ -76,10 +74,6 @@ def _split_tall(
         crop.save(output_path)
         crops.append(output_path)
         index += 1
-    if not crops:
-        output_path = output_dir / f"{image_path.stem}_part0.jpg"
-        image.save(output_path)
-        crops.append(output_path)
     return crops
 
 
@@ -106,8 +100,6 @@ def _split_wide(
     # Slide a crop window horizontally to create splits.
     width, height = image.size
     crop_width = int(height * target_ratio)
-    if crop_width >= width:
-        crop_width = width
     step = int(crop_width * (1 - margin_ratio))
     if step <= 0:
         step = crop_width
@@ -119,10 +111,6 @@ def _split_wide(
         crop.save(output_path)
         crops.append(output_path)
         index += 1
-    if not crops:
-        output_path = output_dir / f"{image_path.stem}_part0.jpg"
-        image.save(output_path)
-        crops.append(output_path)
     return crops
 
 
