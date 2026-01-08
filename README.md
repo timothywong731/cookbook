@@ -1,14 +1,20 @@
-# Cookbook Recipe Generator
+# Pretty Cookbook
 
-Create a cookbook by extracting structured recipes from your Google Photos album and generating watercolor-style illustrations with Azure OpenAI.
+Have you ever wanted to create a beautiful, personalized cookbook from your collection of recipe photos? **Pretty Cookbook** leverages the power of OpenAI's GPT model and FLUX.2-pro to extract recipe information from **any language** and generate stunning watercolor-style illustrations for each dish.
+
+With this tool, you can transform your recipe photos into a professionally formatted cookbook, complete with detailed instructions and artistic visuals that match your desired style.
+
+| Example 1 | Example 2 | Example 3 |
+| :---: | :---: | :---: |
+| ![Style 1](reference_style/example1.png) | ![Style 2](reference_style/example2.png) | ![Style 3](reference_style/example3.png) |
 
 ## Features
 
-- **Google Photos ingestion**: Pulls recipe images from a named album.
-- **Image preprocessing**: Normalizes to a target aspect ratio and splits when needed.
-- **Azure OpenAI extraction**: Extracts structured recipe data with Pydantic validation.
-- **Watercolor illustrations**: Generates a consistent style illustration from reference images.
-- **Markdown output**: Produces a recipe markdown file that includes the illustration.
+- **Local Photo Processing**: Ingests recipe photos (JPG, PNG) directly from a local directory.
+- **Multimodal Extraction**: Uses GPT-4o with Pydantic structured outputs to accurately extract dish names, ingredients, and steps.
+- **Multilingual Support**: Generate your cookbook in any language (English, French, Chinese, etc.).
+- **High-Fidelity Illustrations**: Leverages FLUX.2-pro with **Image-to-Image** and **Style References** to create watercolor illustrations matching your recipe's visual context and a target artistic style.
+- **Markdown Export**: Produces ready-to-print recipe files with embedded illustrations and relative image paths.
 
 ## Prerequisites
 
@@ -32,38 +38,41 @@ Create a cookbook by extracting structured recipes from your Google Photos album
 
 ### Required Environment Variables
 
+The app supports separate endpoints for Chat (extraction) and Images (generation) to accommodate FLUX.2-pro on Serverless/MaaS deployments.
+
 ```bash
-export GOOGLE_CLIENT_SECRET=/path/to/google-client-secret.json
-export GOOGLE_TOKEN=/path/to/google-token.json
-export AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
-export AZURE_OPENAI_API_KEY=your-api-key
-export AZURE_OPENAI_API_VERSION=2024-02-01
-export AZURE_OPENAI_CHAT_DEPLOYMENT=your-chat-deployment
-export AZURE_OPENAI_IMAGE_DEPLOYMENT=your-image-deployment
+# Chat / Extraction (GPT-4o)
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=your-api-key
+AZURE_OPENAI_API_VERSION=2024-08-01-preview
+AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-4o
+
+# Image Generation (FLUX.2-pro / DALL-E)
+# Use the Target URI for Serverless deployments
+AZURE_OPENAI_IMAGE_ENDPOINT=https://flux-xxxx.eastus.models.ai.azure.com
+AZURE_OPENAI_IMAGE_API_KEY=your-flux-api-key
+AZURE_OPENAI_IMAGE_DEPLOYMENT=FLUX.2-pro
 ```
 
 ### Running the Application
 
-You can run the main entry point using the Poetry script:
+You can run the pipeline using the Poetry script:
 
 ```bash
 poetry run app \
-  --album-name recipe \
+  --input-dir path/to/photos \
+  --language "English" \
   --output-dir output \
-  --aspect-ratio 0.8 \
-  --split-margin-ratio 0.08 \
   --reference-style-dir reference_style
 ```
 
-Or directly via Python:
+### Reference Style
 
-```bash
-poetry run python cookbook/main.py
-```
+Place images that represent your desired watercolor aesthetic in the `reference_style/` folder. The AI will analyze these to ensure the generated illustrations follow a consistent style.
 
 ## Running Tests
 
-Run the test suite with Pytest:
+Verify the pipeline and AI integration with Pytest:
 
 ```bash
 poetry run pytest
@@ -73,13 +82,16 @@ poetry run pytest
 
 ```text
 vibe_cookbook/
-├── notebooks/          # Jupyter notebooks for exploration
 ├── cookbook/           # Main package source code
-│   ├── utils/          # Utility modules
-│   └── main.py         # Application entry point
-├── tests/              # Unit tests
-├── pyproject.toml      # Project configuration and dependencies
-└── README.md           # Project documentation
+│   ├── ai.py           # Azure OpenAI & FLUX logic
+│   ├── pipeline.py     # Orchestration logic
+│   ├── main.py         # CLI entry point
+│   └── ...
+├── reference_style/    # Style reference images (watercolor, etc.)
+├── output/
+│   ├── recipes/        # Final markdown and illustrations
+│   └── splits/         # Preprocessed image crops
+└── tests/              # Unit tests with AAA pattern
 ```
 
 ## License

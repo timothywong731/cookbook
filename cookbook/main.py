@@ -7,6 +7,9 @@ from pathlib import Path
 from cookbook.config import AppConfig, DEFAULT_ASPECT_RATIO, DEFAULT_MARGIN_RATIO
 from cookbook.pipeline import run_pipeline
 
+# Load dotenv file if present.
+from dotenv import load_dotenv
+load_dotenv()
 
 def _get_env(name: str) -> str:
     """Fetch a required environment variable.
@@ -40,18 +43,19 @@ def build_config(args: argparse.Namespace) -> AppConfig:
 
     # Combine CLI inputs with environment configuration.
     return AppConfig(
-        album_name=args.album_name,
+        input_dir=Path(args.input_dir),
         output_dir=Path(args.output_dir),
         aspect_ratio=args.aspect_ratio,
         split_margin_ratio=args.split_margin_ratio,
-        credentials_path=Path(_get_env("GOOGLE_CLIENT_SECRET")),
-        token_path=Path(_get_env("GOOGLE_TOKEN")),
         azure_openai_endpoint=_get_env("AZURE_OPENAI_ENDPOINT"),
         azure_openai_api_key=_get_env("AZURE_OPENAI_API_KEY"),
         azure_openai_api_version=_get_env("AZURE_OPENAI_API_VERSION"),
         azure_openai_chat_deployment=_get_env("AZURE_OPENAI_CHAT_DEPLOYMENT"),
+        azure_openai_image_endpoint=os.getenv("AZURE_OPENAI_IMAGE_ENDPOINT", os.getenv("AZURE_OPENAI_ENDPOINT")),
+        azure_openai_image_api_key=os.getenv("AZURE_OPENAI_IMAGE_API_KEY", os.getenv("AZURE_OPENAI_API_KEY")),
         azure_openai_image_deployment=_get_env("AZURE_OPENAI_IMAGE_DEPLOYMENT"),
         reference_style_dir=Path(args.reference_style_dir),
+        language=args.language,
     )
 
 
@@ -61,9 +65,9 @@ def main() -> None:
     # Configure CLI arguments and execute the pipeline.
     parser = argparse.ArgumentParser(description="Generate a cookbook from recipe photos.")
     parser.add_argument(
-        "--album-name",
-        default="recipe",
-        help="Google Photos album name containing recipe photos.",
+        "--input-dir",
+        default="input",
+        help="Directory containing local recipe photos.",
     )
     parser.add_argument(
         "--output-dir",
@@ -86,6 +90,11 @@ def main() -> None:
         "--reference-style-dir",
         default="reference_style",
         help="Directory containing reference watercolor style images.",
+    )
+    parser.add_argument(
+        "--language",
+        default="English",
+        help="Target language for the generated recipes.",
     )
     args = parser.parse_args()
 

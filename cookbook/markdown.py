@@ -22,7 +22,10 @@ def render_recipe_markdown(recipe: Recipe, illustration_path: Path) -> str:
         f"{index + 1}. {step}" for index, step in enumerate(recipe.cooking_steps)
     )
     tips = "\n".join(f"- {tip}" for tip in recipe.tips) if recipe.tips else "-"
-    illustration_ref = illustration_path.as_posix()
+    
+    # Use only the filename as a relative path, since markdown and image share a directory.
+    illustration_ref = illustration_path.name
+    
     return (
         f"# {recipe.dish_name}\n\n"
         f"![Illustration]({illustration_ref})\n\n"
