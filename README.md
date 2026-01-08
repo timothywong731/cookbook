@@ -11,7 +11,7 @@ What it does:
 - **Style-consistent illustration** Generates artistic illustration of the dish matching your reference style.
 
 ## Example
-| Input Recipe Photo | Generated Cookbook Page |
+| Input Recipe Screenshot | Generated Recipe |
 |-------------------|------------------------|
 | <img src="example/input.jpg" alt="drawing" height="400"/> | <img src="example/output.jpg" alt="drawing" height="400"/> |
 
@@ -27,9 +27,9 @@ More examples of generated illustrations in watercolor style:
 ## Features
 
 - **Local Photo Processing**: Ingests recipe photos (JPG, PNG) directly from a local directory.
-- **Multimodal Extraction**: Uses GPT-4o with Pydantic structured outputs to accurately extract dish names, ingredients, and steps.
+- **Multimodal Extraction**: Uses GPT model with Pydantic structured outputs to accurately extract dish names, ingredients, and steps.
 - **Multilingual Support**: Generate your cookbook in any language (English, French, Chinese, etc.).
-- **High-Fidelity Illustrations**: Leverages FLUX.2-pro with **Image-to-Image** and **Style References** to create illustrations matching your recipe's visual context and a target artistic style.
+- **High-Fidelity Illustrations**: Leverages image generation model with **Image-to-Image** and **Style References** to create illustrations matching your recipe's visual context and a target artistic style.
 - **Markdown Export**: Produces ready-to-print recipe files with embedded illustrations and relative image paths.
 
 ## Prerequisites
