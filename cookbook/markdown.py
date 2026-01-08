@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import urllib.parse
 from pathlib import Path
 
 from cookbook.models import Recipe
@@ -24,11 +25,12 @@ def render_recipe_markdown(recipe: Recipe, illustration_path: Path) -> str:
     tips = "\n".join(f"- {tip}" for tip in recipe.tips) if recipe.tips else "-"
     
     # Use only the filename as a relative path, since markdown and image share a directory.
-    illustration_ref = illustration_path.name
+    # Encode spaces and special characters for the HTML src attribute.
+    illustration_ref = urllib.parse.quote(illustration_path.name)
     
     return (
+        f'<img src="{illustration_ref}" align="right" width="400" style="margin-left: 20px;">\n\n'
         f"# {recipe.dish_name}\n\n"
-        f"![Illustration]({illustration_ref})\n\n"
         f"**Preparation time:** {recipe.preparation_time}\n\n"
         f"## Ingredients\n{ingredients}\n\n"
         f"## Steps\n{steps}\n\n"

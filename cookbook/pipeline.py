@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import datetime
+import re
 from pathlib import Path
 
 from cookbook.ai import (
@@ -84,6 +86,12 @@ def run_pipeline(config: AppConfig) -> list[Path]:
             splits,
             language=config.language
         )
+
+        # Create a sanitized base filename: YYYYMMDD_DishNameInCamelCase
+        date_str = datetime.datetime.now().strftime("%Y%m%d")
+        words = re.sub(r'[^a-zA-Z0-9]', ' ', recipe.dish_name).split()
+        dish_slug = "".join(word.capitalize() for word in words)
+        base_filename = f"{date_str}_{dish_slug}"
         
         # 3. Generate an AI illustration matching the watercolor style.
         # Illustration is saved in the same 'recipes' directory as the markdown.
@@ -95,14 +103,14 @@ def run_pipeline(config: AppConfig) -> list[Path]:
             style_prompt,
             splits,
             reference_images,
-            dirs["recipes"] / f"{photo_path.stem}_illustration.png",
+            dirs["recipes"] / f"{base_filename}_illustration.png",
         )
         
         # 4. Format the recipe and illustration link into markdown.
         markdown = render_recipe_markdown(recipe, illustration_path)
         
         # 5. Save the final markdown document in the consolidated 'recipes' directory.
-        output_path = dirs["recipes"] / f"{photo_path.stem}.md"
+        output_path = dirs["recipes"] / f"{base_filename}.md"
         markdown_paths.append(write_recipe_markdown(output_path, markdown))
 
     return markdown_paths

@@ -1,19 +1,35 @@
 # Pretty Cookbook
 
-Have you ever wanted to create a beautiful, personalized cookbook from your collection of recipe photos? **Pretty Cookbook** leverages the power of OpenAI's GPT model and FLUX.2-pro to extract recipe information from **any language** and generate stunning watercolor-style illustrations for each dish.
+Have you ever wanted to create a beautiful, personalized cookbook from your collection of recipe photos? **Pretty Cookbook** leverages the power of AI models to extract recipe information from **any language** into **any language** and generate stunning custom-style illustrations for each dish.
 
 With this tool, you can transform your recipe photos into a professionally formatted cookbook, complete with detailed instructions and artistic visuals that match your desired style.
 
-| Example 1 | Example 2 | Example 3 |
-| :---: | :---: | :---: |
-| ![Style 1](reference_style/example1.png) | ![Style 2](reference_style/example2.png) | ![Style 3](reference_style/example3.png) |
+What it does:
+- **Ingredient and recipe extraction** Identifies and structures recipe data from single photo.
+- **Cooking steps enrichment** Improves clarity and detail of instructions.
+- **Multilingual support** Convert from and to any language.
+- **Style-consistent illustration** Generates artistic illustration of the dish matching your reference style.
+
+## Example
+| Input Recipe Photo | Generated Cookbook Page |
+|-------------------|------------------------|
+| <img src="example/input.jpg" alt="drawing" height="400"/> | <img src="example/output.jpg" alt="drawing" height="400"/> |
+
+
+More examples of generated illustrations in watercolor style:
+
+| Creamy Mushroom Pasta With Chicken | Curry Pork Cutlet Rice Katsu Curry | Shrimp And Silken Tofu With Egg Over Rice | Garlic Chicken Thigh Rice Bowl |
+|-------------------|------------------------|------------------------|------------------------|
+| <img src="example/illustration1.png" alt="drawing" height="200"/> | <img src="example/illustration2.png" alt="drawing" height="200"/> | <img src="example/illustration3.png" alt="drawing" height="200"/> | <img src="example/illustration4.png" alt="drawing" height="200"/> |
+
+
 
 ## Features
 
 - **Local Photo Processing**: Ingests recipe photos (JPG, PNG) directly from a local directory.
 - **Multimodal Extraction**: Uses GPT-4o with Pydantic structured outputs to accurately extract dish names, ingredients, and steps.
 - **Multilingual Support**: Generate your cookbook in any language (English, French, Chinese, etc.).
-- **High-Fidelity Illustrations**: Leverages FLUX.2-pro with **Image-to-Image** and **Style References** to create watercolor illustrations matching your recipe's visual context and a target artistic style.
+- **High-Fidelity Illustrations**: Leverages FLUX.2-pro with **Image-to-Image** and **Style References** to create illustrations matching your recipe's visual context and a target artistic style.
 - **Markdown Export**: Produces ready-to-print recipe files with embedded illustrations and relative image paths.
 
 ## Prerequisites
@@ -68,7 +84,7 @@ poetry run app \
 
 ### Reference Style
 
-Place images that represent your desired watercolor aesthetic in the `reference_style/` folder. The AI will analyze these to ensure the generated illustrations follow a consistent style.
+Place images that represent your desired aesthetic in the `reference_style/` folder. The AI will analyze these to ensure the generated illustrations follow a consistent style.
 
 ## Running Tests
 

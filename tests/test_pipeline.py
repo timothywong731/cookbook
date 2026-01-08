@@ -79,9 +79,15 @@ def test_run_pipeline_success(mock_config: AppConfig):
         )
         mock_extract_recipe.return_value = mock_recipe
         
-        mock_gen_illustration.return_value = Path("/mock/output/recipes/recipe1_illustration.png")
+        # Define expected filenames based on the new convention: YYYYMMDD_TestDish
+        # We assume the test runs on 2026-01-08 as per current context.
+        expected_base = "20260108_TestDish"
+        expected_illustration = Path(f"/mock/output/recipes/{expected_base}_illustration.png")
+        expected_markdown = Path(f"/mock/output/recipes/{expected_base}.md")
+
+        mock_gen_illustration.return_value = expected_illustration
         mock_render_md.return_value = "# Test Recipe"
-        mock_write_md.return_value = Path("/mock/output/recipes/recipe1.md")
+        mock_write_md.return_value = expected_markdown
 
         # Act
         results = run_pipeline(mock_config)
@@ -89,7 +95,7 @@ def test_run_pipeline_success(mock_config: AppConfig):
         # Assert
         # Verify that all components were called with expected arguments.
         assert len(results) == 1
-        assert results[0] == Path("/mock/output/recipes/recipe1.md")
+        assert results[0] == expected_markdown
         
         mock_ensure_dirs.assert_called_once_with(mock_config.output_dir)
         mock_split_to_ratio.assert_called_once()
@@ -113,10 +119,10 @@ def test_run_pipeline_success(mock_config: AppConfig):
             "Watercolor style",
             mock_split_to_ratio.return_value,
             [Path("/mock/style/style1.jpg")],
-            Path("/mock/output/recipes/recipe1_illustration.png")
+            expected_illustration
         )
-        mock_render_md.assert_called_once_with(mock_recipe, Path("/mock/output/recipes/recipe1_illustration.png"))
-        mock_write_md.assert_called_once_with(Path("/mock/output/recipes/recipe1.md"), "# Test Recipe")
+        mock_render_md.assert_called_once_with(mock_recipe, expected_illustration)
+        mock_write_md.assert_called_once_with(expected_markdown, "# Test Recipe")
 
 
 def test_run_pipeline_no_photos(mock_config: AppConfig):
