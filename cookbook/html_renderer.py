@@ -3,6 +3,8 @@ from __future__ import annotations
 import urllib.parse
 from pathlib import Path
 
+from jinja2 import Environment, FileSystemLoader
+
 from cookbook.models import Recipe
 
 
@@ -17,36 +19,15 @@ def render_recipe_html(recipe: Recipe, illustration_path: Path) -> str:
         HTML string.
     """
 
-    template_path = Path(__file__).parent / "templates" / "recipe.html"
-    template = template_path.read_text(encoding="utf-8")
+    template_dir = Path(__file__).parent / "templates"
+    env = Environment(loader=FileSystemLoader(template_dir))
+    template = env.get_template("recipe.html")
 
     illustration_url = urllib.parse.quote(illustration_path.name)
-    
-    description_tag = f"<p>{recipe.description}</p>" if recipe.description else ""
-    
-    ingredients_html = "\n".join(f"<li>{item}</li>" for item in recipe.ingredients)
-    steps_html = "\n".join(f"<li>{step}</li>" for step in recipe.cooking_steps)
-    
-    notes_html = ""
-    if recipe.tips:
-        tips_content = " ".join(recipe.tips)
-        notes_html = f"""
-        <div class="notes-area">
-            <h3>NOTES</h3>
-            <p>{tips_content}</p>
-        </div>
-        """
 
-    return template.format(
-        dish_name=recipe.dish_name,
-        description_tag=description_tag,
-        illustration_url=illustration_url,
-        servings=recipe.servings or "-",
-        prep_time=recipe.preparation_time or "-",
-        cook_time=recipe.cooking_time or "-",
-        ingredients_html=ingredients_html,
-        steps_html=steps_html,
-        notes_html=notes_html
+    return template.render(
+        recipe=recipe,
+        illustration_url=illustration_url
     )
 
 
