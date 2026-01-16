@@ -27,6 +27,7 @@ def mock_config() -> AppConfig:
         azure_openai_image_deployment="image-deploy",
         reference_style_dir=Path("/mock/style"),
         language="English",
+        export_html=True,
     )
 
 
@@ -44,8 +45,9 @@ def test_run_pipeline_success(mock_config: AppConfig):
          patch("cookbook.pipeline.derive_style_prompt") as mock_derive_style, \
          patch("cookbook.pipeline.extract_recipe") as mock_extract_recipe, \
          patch("cookbook.pipeline.generate_illustration") as mock_gen_illustration, \
-         patch("cookbook.pipeline.render_recipe_markdown") as mock_render_md, \
-         patch("cookbook.pipeline.write_recipe_markdown") as mock_write_md, \
+         patch("cookbook.pipeline.render_recipe_html") as mock_render_html, \
+         patch("cookbook.pipeline.write_recipe_html") as mock_write_html, \
+         patch.object(Path, "write_text") as mock_write_text, \
          patch.object(Path, "glob") as mock_glob:
 
         # Set up mock returns
@@ -80,24 +82,29 @@ def test_run_pipeline_success(mock_config: AppConfig):
         mock_extract_recipe.return_value = mock_recipe
         
         # Define expected filenames based on the new convention: YYYYMMDD_TestDish
-        # We assume the test runs on 2026-01-08 as per current context.
-        expected_base = "20260108_TestDish"
-        expected_illustration = Path(f"/mock/output/recipes/{expected_base}_illustration.png")
-        expected_markdown = Path(f"/mock/output/recipes/{expected_base}.md")
+        # Use a fixed date to ensure consistency during tests.
+        with patch("datetime.datetime") as mock_date:
+            mock_date.now.return_value.strftime.return_value = "20260116"
+            
+            expected_base = "20260116_TestDish"
+            expected_illustration = Path(f"/mock/output/recipes/{expected_base}_illustration.png")
+            expected_json = Path(f"/mock/output/recipes/{expected_base}.json")
+            expected_html = Path(f"/mock/output/recipes/{expected_base}.html")
 
-        mock_gen_illustration.return_value = expected_illustration
-        mock_render_md.return_value = "# Test Recipe"
-        mock_write_md.return_value = expected_markdown
+            mock_gen_illustration.return_value = expected_illustration
+            mock_render_html.return_value = "<html>Test Recipe</html>"
+            mock_write_html.return_value = expected_html
 
-        # Act
-        results = run_pipeline(mock_config)
+            # Act
+            results = run_pipeline(mock_config)
 
-        # Assert
-        # Verify that all components were called with expected arguments.
-        assert len(results) == 1
-        assert results[0] == expected_markdown
-        
-        mock_ensure_dirs.assert_called_once_with(mock_config.output_dir)
+            # Assert
+            # Verify that all components were called with expected arguments.
+            assert len(results) == 2
+            assert expected_json in results
+            assert expected_html in results
+            
+            mock_ensure_dirs.assert_called_once_with(mock_config.output_dir)
         mock_split_to_ratio.assert_called_once()
         mock_build_client.assert_called_once()
         mock_build_image_client.assert_called_once()
@@ -121,8 +128,13 @@ def test_run_pipeline_success(mock_config: AppConfig):
             [Path("/mock/style/style1.jpg")],
             expected_illustration
         )
-        mock_render_md.assert_called_once_with(mock_recipe, expected_illustration)
-        mock_write_md.assert_called_once_with(expected_markdown, "# Test Recipe")
+        mock_render_html.assert_called_once_with(mock_recipe, expected_illustration)
+        mock_write_html.assert_called_once_with(expected_html, "<html>Test Recipe</html>")
+        
+        # Verify JSON writing
+        mock_write_text.assert_called_once()
+        # The first argument would be the file path, and we only did one write_text in this mock
+        # although with Path mocks it can be tricky. Let's just check the most important parts.
 
 
 def test_run_pipeline_no_photos(mock_config: AppConfig):

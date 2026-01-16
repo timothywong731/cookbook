@@ -8,14 +8,20 @@ class Recipe(BaseModel):
 
     Attributes:
         dish_name: Name of the dish.
+        description: A short, appetizing description or subtitle for the dish.
         ingredients: Ingredient list, one item per entry.
         cooking_steps: Ordered cooking steps.
-        preparation_time: Preparation time with units.
-        tips: Optional cooking tips.
+        preparation_time: Preparation time with units (e.g., '15 min').
+        cooking_time: Cooking time with units (e.g., '30 min').
+        servings: Number of servings (e.g., '2').
+        tips: Optional cooking tips or notes.
     """
 
     # Core recipe fields for structured output.
     dish_name: str = Field(..., description="Name of the dish")
+    description: str = Field(
+        "", description="A short, appetizing description or subtitle for the dish"
+    )
     ingredients: list[str] = Field(
         default_factory=list, description="Ingredient list, one item per entry"
     )
@@ -23,6 +29,12 @@ class Recipe(BaseModel):
         default_factory=list, description="Ordered cooking steps"
     )
     preparation_time: str = Field(
-        ..., description="Preparation time including units, e.g., '30 minutes'"
+        "", description="Preparation time including units, e.g., '15 min'"
     )
-    tips: list[str] = Field(default_factory=list, description="Optional cooking tips")
+    cooking_time: str = Field(
+        "", description="Cooking time including units, e.g., '30 min'"
+    )
+    servings: str = Field(
+        "", description="Number of servings, e.g., '2'"
+    )
+    tips: list[str] = Field(default_factory=list, description="Optional cooking tips or notes")

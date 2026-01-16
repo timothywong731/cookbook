@@ -56,6 +56,7 @@ def build_config(args: argparse.Namespace) -> AppConfig:
         azure_openai_image_deployment=_get_env("AZURE_OPENAI_IMAGE_DEPLOYMENT"),
         reference_style_dir=Path(args.reference_style_dir),
         language=args.language,
+        export_html=args.export_html,
     )
 
 
@@ -72,7 +73,7 @@ def main() -> None:
     parser.add_argument(
         "--output-dir",
         default="output",
-        help="Directory for generated markdown, images, and intermediate files.",
+        help="Directory for generated JSON, images, and intermediate files.",
     )
     parser.add_argument(
         "--aspect-ratio",
@@ -96,11 +97,16 @@ def main() -> None:
         default="English",
         help="Target language for the generated recipes.",
     )
+    parser.add_argument(
+        "--export-html",
+        action="store_true",
+        help="Whether to export recipes as HTML files.",
+    )
     args = parser.parse_args()
 
     config = build_config(args)
-    markdown_paths = run_pipeline(config)
-    for path in markdown_paths:
+    output_paths = run_pipeline(config)
+    for path in output_paths:
         print(f"Generated {path}")
 
 

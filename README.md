@@ -30,7 +30,7 @@ More examples of generated illustrations in watercolor style:
 - **Multimodal Extraction**: Uses GPT model with Pydantic structured outputs to accurately extract dish names, ingredients, and steps.
 - **Multilingual Support**: Generate your cookbook in any language (English, French, Chinese, etc.).
 - **High-Fidelity Illustrations**: Leverages image generation model with **Image-to-Image** and **Style References** to create illustrations matching your recipe's visual context and a target artistic style.
-- **Markdown Export**: Produces ready-to-print recipe files with embedded illustrations and relative image paths.
+- **Structured Data Export**: Produces ready-to-print recipe files in JSON format, with an optional artistic HTML export.
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ The app supports separate endpoints for Chat (extraction) and Images (generation
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
 AZURE_OPENAI_API_KEY=your-api-key
 AZURE_OPENAI_API_VERSION=2024-08-01-preview
-AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-5-mini
+AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-4o
 
 # Image Generation (FLUX.2-pro / DALL-E)
 # Use the Target URI for Serverless deployments
@@ -79,7 +79,8 @@ poetry run app \
   --input-dir path/to/photos \
   --language "English" \
   --output-dir output \
-  --reference-style-dir reference_style
+  --reference-style-dir reference_style \
+  --export-html
 ```
 
 ### Reference Style

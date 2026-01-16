@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import json
 import re
 from pathlib import Path
 
@@ -13,7 +14,7 @@ from cookbook.ai import (
 )
 from cookbook.config import AppConfig, ensure_output_dirs
 from cookbook.image_processing import split_to_aspect_ratio
-from cookbook.markdown import render_recipe_markdown, write_recipe_markdown
+from cookbook.html_renderer import render_recipe_html, write_recipe_html
 
 
 def run_pipeline(config: AppConfig) -> list[Path]:
@@ -23,7 +24,7 @@ def run_pipeline(config: AppConfig) -> list[Path]:
         config: Application configuration containing input/output paths and AI credentials.
 
     Returns:
-        List[Path]: A list of paths to the generated markdown recipe files.
+        List[Path]: A list of paths to the generated recipe files (JSON and optionally HTML).
 
     Raises:
         ValueError: If no photos are found in the input directory or no reference style images exist.
@@ -68,7 +69,7 @@ def run_pipeline(config: AppConfig) -> list[Path]:
     )
 
     # Process each source photo: split it, extract a single recipe from all splits, and illustrate.
-    markdown_paths = []
+    output_paths = []
     for photo_path in source_photo_paths:
         # 1. Split the single source photo into multiple aspect-ratio-friendly crops.
         # We group these splits so the AI can see the entire recipe page across multiple images.
@@ -89,28 +90,35 @@ def run_pipeline(config: AppConfig) -> list[Path]:
 
         # Create a sanitized base filename: YYYYMMDD_DishNameInCamelCase
         date_str = datetime.datetime.now().strftime("%Y%m%d")
-        words = re.sub(r'[^a-zA-Z0-9]', ' ', recipe.dish_name).split()
+        # Support Unicode characters (e.g. Chinese) while sanitizing for filenames
+        words = re.sub(r"[^\w]|_", " ", recipe.dish_name).split()
         dish_slug = "".join(word.capitalize() for word in words)
         base_filename = f"{date_str}_{dish_slug}"
         
         # 3. Generate an AI illustration matching the watercolor style.
-        # Illustration is saved in the same 'recipes' directory as the markdown.
+        # Illustration is saved in the same 'recipes' directory.
         # We pass the recipe, source splits, and style references to FLUX.2-pro for realistic generation.
         illustration_path = generate_illustration(
             image_client,
             config.azure_openai_image_deployment,
-            recipe,
+            recipe, 
             style_prompt,
             splits,
             reference_images,
             dirs["recipes"] / f"{base_filename}_illustration.png",
         )
         
-        # 4. Format the recipe and illustration link into markdown.
-        markdown = render_recipe_markdown(recipe, illustration_path)
-        
-        # 5. Save the final markdown document in the consolidated 'recipes' directory.
-        output_path = dirs["recipes"] / f"{base_filename}.md"
-        markdown_paths.append(write_recipe_markdown(output_path, markdown))
+        # 4. Save the final documents in the consolidated 'recipes' directory.
+        # We always save the structured JSON.
+        json_path = dirs["recipes"] / f"{base_filename}.json"
+        json_path.write_text(recipe.model_dump_json(indent=4), encoding="utf-8")
+        output_paths.append(json_path)
 
-    return markdown_paths
+        # 5. Optionally save the artistic HTML.
+        if config.export_html:
+            html = render_recipe_html(recipe, illustration_path)
+            html_path = dirs["recipes"] / f"{base_filename}.html"
+            write_recipe_html(html_path, html)
+            output_paths.append(html_path)
+
+    return output_paths

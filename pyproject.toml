@@ -17,6 +17,7 @@ dependencies = [
 
 [project.scripts]
 app = "cookbook.main:main"
+export = "cookbook.export_html:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

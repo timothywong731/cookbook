@@ -22,6 +22,7 @@ class AppConfig:
         azure_openai_image_deployment: Azure OpenAI image deployment name.
         reference_style_dir: Directory containing reference style images.
         language: Target language for the recipe extraction.
+        export_html: Whether to export recipes as HTML files.
     """
 
     # Pipeline configuration values.
@@ -38,6 +39,7 @@ class AppConfig:
     azure_openai_image_deployment: str
     reference_style_dir: Path
     language: str
+    export_html: bool
 
 
 DEFAULT_ASPECT_RATIO = 4 / 5

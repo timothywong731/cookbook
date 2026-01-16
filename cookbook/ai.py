@@ -15,6 +15,9 @@ logger = logging.getLogger(__name__)
 
 SYSTEM_RECIPE_PROMPT = (
     "You extract recipes from images and respond with JSON that matches the schema. "
+    "Fill in as many fields as possible including 'description', 'servings', 'preparation_time', 'cooking_time' and 'tips'. "
+    "If a value is not explicitly in the text, you can infer it if it's obvious (e.g. servings based on quantities), "
+    "or provide an appropriate estimate. Write the 'description' as a short, appetizing subtitle. "
     "Do not include any commentary."
 )
 
