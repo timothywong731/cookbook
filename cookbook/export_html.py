@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from cookbook.models import Recipe
-from cookbook.html_renderer import render_recipe_html, write_recipe_html
+from cookbook.html_renderer import render_recipe_html, write_recipe_html, rebuild_index
 
 
 def export_all(recipes_dir: Path):
@@ -40,6 +40,9 @@ def export_all(recipes_dir: Path):
             
         except Exception as e:
             print(f"  Error processing {json_path.name}: {e}")
+
+    # Rebuild the gallery index after all recipes are exported
+    rebuild_index(recipes_dir)
 
 
 def main():

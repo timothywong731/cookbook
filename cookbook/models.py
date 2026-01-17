@@ -15,6 +15,7 @@ class Recipe(BaseModel):
         cooking_time: Cooking time with units (e.g., '30 min').
         servings: Number of servings (e.g., '2').
         tips: Optional cooking tips or notes.
+        source_photo: The original filename of the photo from which this recipe was extracted.
     """
 
     # Core recipe fields for structured output.
@@ -38,3 +39,12 @@ class Recipe(BaseModel):
         "", description="Number of servings, e.g., '2'"
     )
     tips: list[str] = Field(default_factory=list, description="Optional cooking tips or notes")
+    source_photo: str = Field(
+        "", description="The filename of the source photo used for extraction"
+    )
+    source_photo: str = Field(
+        "", description="The filename of the source photo used for extraction"
+    )
+    source_photo: str = Field(
+        "", description="The filename of the source photo used for extraction"
+    )

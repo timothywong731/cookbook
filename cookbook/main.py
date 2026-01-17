@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import os
 from pathlib import Path
 
@@ -63,6 +64,11 @@ def build_config(args: argparse.Namespace) -> AppConfig:
 def main() -> None:
     """CLI entry point for running the cookbook pipeline."""
 
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+
     # Configure CLI arguments and execute the pipeline.
     parser = argparse.ArgumentParser(description="Generate a cookbook from recipe photos.")
     parser.add_argument(
@@ -105,6 +111,13 @@ def main() -> None:
     args = parser.parse_args()
 
     config = build_config(args)
+
+    # Setup basic logging to console
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+
     output_paths = run_pipeline(config)
     for path in output_paths:
         print(f"Generated {path}")

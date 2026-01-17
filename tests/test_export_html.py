@@ -24,11 +24,12 @@ def test_export_all_success():
     mock_recipe = MagicMock(spec=Recipe)
     
     with patch("cookbook.export_html.Recipe.model_validate_json", return_value=mock_recipe), \
-         patch.object(Path, "read_text", return_value='{"mock": "json"}'), \
-         patch.object(Path, "exists", return_value=True), \
-         patch("cookbook.export_html.render_recipe_html") as mock_render, \
-         patch("cookbook.export_html.write_recipe_html") as mock_write, \
-         patch("builtins.print") as mock_print:
+        patch.object(Path, "read_text", return_value='{"mock": "json"}'), \
+        patch.object(Path, "exists", return_value=True), \
+        patch("cookbook.export_html.render_recipe_html") as mock_render, \
+        patch("cookbook.export_html.write_recipe_html") as mock_write, \
+        patch("cookbook.export_html.rebuild_index") as mock_rebuild_index, \
+        patch("builtins.print") as mock_print:
         
         mock_render.return_value = "<html>Test</html>"
 
@@ -39,8 +40,9 @@ def test_export_all_success():
         mock_recipes_dir.glob.assert_called_once_with("*.json")
         mock_render.assert_called_once()
         mock_write.assert_called_once_with(Path("recipe1.html"), "<html>Test</html>")
-        # Verify success print was called (last call)
+        # Verify success print was called
         mock_print.assert_any_call("  Generated recipe1.html")
+        mock_rebuild_index.assert_called_once_with(mock_recipes_dir)
 
 
 def test_export_all_handles_error():
@@ -52,8 +54,9 @@ def test_export_all_handles_error():
     mock_recipes_dir.glob.return_value = [mock_json_path]
     
     with patch("cookbook.export_html.Recipe.model_validate_json", side_effect=ValueError("Invalid JSON")), \
-         patch.object(Path, "read_text", return_value='{}'), \
-         patch("builtins.print") as mock_print:
+        patch.object(Path, "read_text", return_value='{}'), \
+        patch("cookbook.export_html.rebuild_index") as mock_rebuild_index, \
+        patch("builtins.print") as mock_print:
         
         # Act
         export_all(mock_recipes_dir)
@@ -61,6 +64,7 @@ def test_export_all_handles_error():
         # Assert
         # Should print the error message
         mock_print.assert_any_call("  Error processing fail.json: Invalid JSON")
+        mock_rebuild_index.assert_called_once_with(mock_recipes_dir)
 
 
 def test_export_html_main_execution():
